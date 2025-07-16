@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Environment variables
+.env
+
+# Database files
+*.db
+*.db-journal
+
+# Documentation build output
+docs/_build/
+
+# IDE files
+.idea/
+.vscode/
+.My_doc/
