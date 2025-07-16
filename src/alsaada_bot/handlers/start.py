@@ -1,18 +1,13 @@
+# المسار: src/alsaada_bot/handlers/start.py
+# الرجاء استبدال محتوى الملف بالكامل بهذا الكود
+
 import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
-# --- Main Menu Definition ---
-# This list is based on the project documentation and user requirements
+# --- تعريف هيكل القائمة الرئيسية الكامل ---
 MAIN_MENU_STRUCTURE = {
-    "شؤون الموظفين": {
-        "icon": "👥",
-        "sub_menu": {
-            "قائمة الموظفين": {"icon": "📄", "callback": "employees:list"},
-            "الرواتب والسلف": {"icon": "💰", "callback": "salaries:main"},
-            "الحضور والإجازات": {"icon": "⏰", "callback": "attendance:main"},
-        },
-    },
+    "شؤون الموظفين": {"icon": "👥", "callback": "employees:main"},
     "الحسابات": {
         "icon": "📊",
         "sub_menu": {
@@ -26,11 +21,7 @@ MAIN_MENU_STRUCTURE = {
     "الصيانة والتشغيل": {
         "icon": "🛠️",
         "sub_menu": {
-            # FIX: Broke the long key-value pair into multiple lines
-            "مخزون الزيوت وقطع الغيار": {
-                "icon": "🛢️",
-                "callback": "stock:main",
-            },
+            "مخزون الزيوت وقطع الغيار": {"icon": "🛢️", "callback": "stock:main"},
             "عمليات الصيانة": {"icon": "🔧", "callback": "maintenance:main"},
             "التشغيل اليومي": {"icon": "🗓️", "callback": "daily_ops:main"},
             "المعدات المستأجرة": {"icon": "🚜", "callback": "rented_eq:main"},
@@ -40,51 +31,60 @@ MAIN_MENU_STRUCTURE = {
 }
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    # FIX: Broke the long docstring into multiple lines
+def get_main_menu_keyboard() -> InlineKeyboardMarkup:
     """
-    Sends a welcome message with the main menu when the /start command is issued.
+    تقوم ببناء وإرجاع لوحة المفاتيح للقائمة الرئيسية.
+    """
+    keyboard = []
+    for main_item, details in MAIN_MENU_STRUCTURE.items():
+        if "callback" in details:
+            button = InlineKeyboardButton(
+                f"{details['icon']} {main_item}", callback_data=details["callback"]
+            )
+        elif "sub_menu" in details:
+            button = InlineKeyboardButton(
+                f"{details['icon']} {main_item}", callback_data=f"menu:show:{main_item}"
+            )
+        keyboard.append([button])
+    return InlineKeyboardMarkup(keyboard)
+
+
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    ترسل رسالة ترحيبية مع القائمة الرئيسية عند استدعاء أمر /start.
     """
     user = update.effective_user
     logging.info(f"User {user.first_name} ({user.id}) started the bot.")
 
-    # The complex list comprehension was replaced with a standard for-loop.
-    # This is more readable, easier to maintain, and fixes parsing issues
-    # for tools like 'black'.
-    keyboard = []
-    for main_item, details in MAIN_MENU_STRUCTURE.items():
-        # Check if the menu item has a sub-menu
-        if "sub_menu" in details:
-            # FIX: Broke the long function call into multiple lines
-            button = InlineKeyboardButton(
-                f"{details['icon']} {main_item}",
-                callback_data=f"menu:{main_item}",
-            )
-        # Otherwise, it's a direct action item
-        else:
-            # FIX: Broke the long function call into multiple lines
-            button = InlineKeyboardButton(
-                f"{details['icon']} {main_item}",
-                callback_data=details["callback"],
-            )
-        keyboard.append([button])
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
+    reply_markup = get_main_menu_keyboard()
     await update.message.reply_html(
         rf"مرحباً بك يا {user.mention_html()} في بوت السعادة للمقاولات!",
         reply_markup=reply_markup,
     )
 
 
+async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    تقوم بتعديل الرسالة الحالية لعرض القائمة الرئيسية (تستخدم لزر الرجوع).
+    """
+    query = update.callback_query
+    reply_markup = get_main_menu_keyboard()
+    await query.edit_message_text(text="القائمة الرئيسية:", reply_markup=reply_markup)
+
+
 async def show_sub_menu(
     update: Update, context: ContextTypes.DEFAULT_TYPE, menu_key: str
 ) -> None:
-    """Displays a sub-menu based on the selected main category."""
+    """
+    تعرض القائمة الفرعية البسيطة بناءً على الفئة الرئيسية التي تم اختيارها.
+    """
     query = update.callback_query
-    await query.answer()
-
     sub_menu_items = MAIN_MENU_STRUCTURE.get(menu_key, {}).get("sub_menu", {})
+
+    if not sub_menu_items:
+        await query.edit_message_text(text="خطأ: القائمة الفرعية غير موجودة.")
+        return
+
     keyboard = []
     for item_name, item_details in sub_menu_items.items():
         button = InlineKeyboardButton(
@@ -93,15 +93,10 @@ async def show_sub_menu(
         )
         keyboard.append([button])
 
-    # Add a back button
-    # FIX: Broke the long function call into multiple lines
-    back_button = InlineKeyboardButton(
-        "🔙 رجوع للقائمة الرئيسية", callback_data="menu:main_back"
-    )
+    back_button = InlineKeyboardButton("🔙 رجوع", callback_data="menu:back_to_main")
     keyboard.append([back_button])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-
     await query.edit_message_text(
         text=f"اختر من قائمة {menu_key}:",
         reply_markup=reply_markup,

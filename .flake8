@@ -1,0 +1,20 @@
+[flake8]
+# تحديد المجلدات التي سيتم تجاهلها
+exclude =
+    .git,
+    __pycache__,
+    docs/source/conf.py,
+    build,
+    dist,
+    venv,
+    env,
+    alembic/
+    .My_doc/
+
+# تحديد الحد الأقصى لطول السطر ليتوافق مع أداة black
+max-line-length = 88
+
+# تجاهل أخطاء معينة (اختياري)
+# E203: مسافة بيضاء قبل ':'، تتعارض أحيانًا مع black
+# W503: فاصل أسطر قبل المعامل الثنائي
+extend-ignore = E203, W503

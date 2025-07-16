@@ -58,7 +58,11 @@ async def handle_employee_upload(
         session.close()
 
         await update.message.reply_text(
-            f"تم الرفع بنجاح!\nتمت إضافة: {added_count} موظف جديد.\nتم تحديث: {updated_count} موظف موجود."
+            (
+                f"تم الرفع بنجاح!\n"
+                f"تمت إضافة: {added_count} موظف جديد.\n"
+                f"تم تحديث: {updated_count} موظف موجود."
+            )
         )
 
     except Exception as e:

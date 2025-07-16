@@ -23,3 +23,6 @@ Pillow
 pytest
 flake8
 black
+
+pytest
+pytest-asyncio

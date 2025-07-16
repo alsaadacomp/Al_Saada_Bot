@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Float, Enum
+from sqlalchemy import create_engine, Column, Integer, String, Date, Float
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # --- Database Setup ---
@@ -79,7 +79,3 @@ def init_db():
     print("Initializing database and creating tables...")
     Base.metadata.create_all(bind=engine)
     print("Database initialized successfully.")
-
-
-if __name__ == "__main__":
-    init_db()
