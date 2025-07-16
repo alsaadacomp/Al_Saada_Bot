@@ -4,6 +4,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from src.alsaada_bot.database import SessionLocal, Employee
 
+
 async def start_upload(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Starts the employee upload process."""
     await update.message.reply_text(
@@ -17,7 +18,10 @@ async def start_upload(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     )
     await update.message.reply_document(document=open("employees_template.xlsx", "rb"))
 
-async def handle_employee_upload(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+async def handle_employee_upload(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
     """Handles the uploaded Excel file."""
     file = await context.bot.get_file(update.message.document.file_id)
     file_path = await file.download_to_drive()
@@ -33,7 +37,11 @@ async def handle_employee_upload(update: Update, context: ContextTypes.DEFAULT_T
             national_id = employee_data.get("national_id_number")
 
             if national_id:
-                existing_employee = session.query(Employee).filter_by(national_id_number=str(national_id)).first()
+                existing_employee = (
+                    session.query(Employee)
+                    .filter_by(national_id_number=str(national_id))
+                    .first()
+                )
                 if existing_employee:
                     for key, value in employee_data.items():
                         setattr(existing_employee, key, value)
@@ -55,4 +63,6 @@ async def handle_employee_upload(update: Update, context: ContextTypes.DEFAULT_T
 
     except Exception as e:
         logging.error(f"Error processing employee upload: {e}")
-        await update.message.reply_text("حدث خطأ أثناء معالجة الملف. يرجى التأكد من أنه بالصيغة الصحيحة.")
+        await update.message.reply_text(
+            "حدث خطأ أثناء معالجة الملف. يرجى التأكد من أنه بالصيغة الصحيحة."
+        )

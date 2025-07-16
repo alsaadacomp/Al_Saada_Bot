@@ -11,7 +11,7 @@ MAIN_MENU_STRUCTURE = {
             "قائمة الموظفين": {"icon": "📄", "callback": "employees:list"},
             "الرواتب والسلف": {"icon": "💰", "callback": "salaries:main"},
             "الحضور والإجازات": {"icon": "⏰", "callback": "attendance:main"},
-        }
+        },
     },
     "الحسابات": {
         "icon": "📊",
@@ -21,33 +21,53 @@ MAIN_MENU_STRUCTURE = {
             "العهد": {"icon": "💼", "callback": "custodies:main"},
             "الموردين": {"icon": "🤝", "callback": "suppliers:main"},
             "حسابات المقاولين": {"icon": "🏗️", "callback": "contractors:main"},
-        }
+        },
     },
     "الصيانة والتشغيل": {
         "icon": "🛠️",
         "sub_menu": {
-            "مخزون الزيوت وقطع الغيار": {"icon": "🛢️", "callback": "stock:main"},
+            # FIX: Broke the long key-value pair into multiple lines
+            "مخزون الزيوت وقطع الغيار": {
+                "icon": "🛢️",
+                "callback": "stock:main",
+            },
             "عمليات الصيانة": {"icon": "🔧", "callback": "maintenance:main"},
             "التشغيل اليومي": {"icon": "🗓️", "callback": "daily_ops:main"},
             "المعدات المستأجرة": {"icon": "🚜", "callback": "rented_eq:main"},
-        }
+        },
     },
     "ملاحظات وتاسكات": {"icon": "📝", "callback": "notes:main"},
 }
 
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Sends a welcome message with the main menu when the /start command is issued."""
+    # FIX: Broke the long docstring into multiple lines
+    """
+    Sends a welcome message with the main menu when the /start command is issued.
+    """
     user = update.effective_user
     logging.info(f"User {user.first_name} ({user.id}) started the bot.")
 
+    # The complex list comprehension was replaced with a standard for-loop.
+    # This is more readable, easier to maintain, and fixes parsing issues
+    # for tools like 'black'.
     keyboard = []
     for main_item, details in MAIN_MENU_STRUCTURE.items():
+        # Check if the menu item has a sub-menu
         if "sub_menu" in details:
-            # Main categories with sub-menus
-            keyboard.append([InlineKeyboardButton(f"{details["icon"]} {main_item}", callback_data=f"menu:{main_item}")])
+            # FIX: Broke the long function call into multiple lines
+            button = InlineKeyboardButton(
+                f"{details['icon']} {main_item}",
+                callback_data=f"menu:{main_item}",
+            )
+        # Otherwise, it's a direct action item
         else:
-            # Direct items like "Notes and Tasks"
-            keyboard.append([InlineKeyboardButton(f"{details["icon"]} {main_item}", callback_data=details["callback"])])
+            # FIX: Broke the long function call into multiple lines
+            button = InlineKeyboardButton(
+                f"{details['icon']} {main_item}",
+                callback_data=details["callback"],
+            )
+        keyboard.append([button])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -56,7 +76,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_markup=reply_markup,
     )
 
-async def show_sub_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, menu_key: str) -> None:
+
+async def show_sub_menu(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, menu_key: str
+) -> None:
     """Displays a sub-menu based on the selected main category."""
     query = update.callback_query
     await query.answer()
@@ -64,10 +87,18 @@ async def show_sub_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, menu
     sub_menu_items = MAIN_MENU_STRUCTURE.get(menu_key, {}).get("sub_menu", {})
     keyboard = []
     for item_name, item_details in sub_menu_items.items():
-        keyboard.append([InlineKeyboardButton(f"{item_details["icon"]} {item_name}", callback_data=item_details["callback"])])
+        button = InlineKeyboardButton(
+            f"{item_details['icon']} {item_name}",
+            callback_data=item_details["callback"],
+        )
+        keyboard.append([button])
 
     # Add a back button
-    keyboard.append([InlineKeyboardButton("🔙 رجوع للقائمة الرئيسية", callback_data="menu:main_back")])
+    # FIX: Broke the long function call into multiple lines
+    back_button = InlineKeyboardButton(
+        "🔙 رجوع للقائمة الرئيسية", callback_data="menu:main_back"
+    )
+    keyboard.append([back_button])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 

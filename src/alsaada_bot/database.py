@@ -10,11 +10,17 @@ Base = declarative_base()
 
 # --- Enums for Dropdown Lists (as per user requirements) ---
 # These provide consistency at the application level.
-MARITAL_STATUS_OPTIONS = ['Single', 'Married', 'Divorced', 'Widowed']
-SALARY_TYPE_OPTIONS = ['Daily', 'Monthly', 'Piecework']
-LICENSE_TYPE_OPTIONS = ['None', 'First Class', 'Second Class', 'Third Class', 'Private']
-TRANSFER_TYPE_OPTIONS = ['Wallet', 'Instapay']
-EMPLOYMENT_STATUS_OPTIONS = ['Current Employee', 'Suspended', 'Terminated', 'Deceased', 'Other']
+MARITAL_STATUS_OPTIONS = ["Single", "Married", "Divorced", "Widowed"]
+SALARY_TYPE_OPTIONS = ["Daily", "Monthly", "Piecework"]
+LICENSE_TYPE_OPTIONS = ["None", "First Class", "Second Class", "Third Class", "Private"]
+TRANSFER_TYPE_OPTIONS = ["Wallet", "Instapay"]
+EMPLOYMENT_STATUS_OPTIONS = [
+    "Current Employee",
+    "Suspended",
+    "Terminated",
+    "Deceased",
+    "Other",
+]
 
 
 # --- ORM Model for the Employee Table ---
@@ -23,10 +29,12 @@ class Employee(Base):
 
     # Core Identification
     id = Column(Integer, primary_key=True, index=True)
-    worker_code = Column(String, unique=True, index=True, nullable=True) # Auto-generated
+    worker_code = Column(
+        String, unique=True, index=True, nullable=True
+    )  # Auto-generated
     full_name_ar = Column(String, nullable=False)
     nickname_ar = Column(String, nullable=True)
-    profile_photo_path = Column(String, nullable=True) # Stores path to image
+    profile_photo_path = Column(String, nullable=True)  # Stores path to image
 
     # Personal Information
     date_of_birth = Column(Date, nullable=True)
@@ -41,13 +49,13 @@ class Employee(Base):
     date_of_hire = Column(Date, nullable=True)
     job_title_ar = Column(String(100), nullable=True)
     department_ar = Column(String, nullable=True)
-    employment_status_ar = Column(String, default='Current Employee')
+    employment_status_ar = Column(String, default="Current Employee")
     file_number_ar = Column(String, unique=True, nullable=True)
 
     # Financial Information
     salary_type_ar = Column(String, nullable=True)
     salary_amount = Column(Float, nullable=True)
-    
+
     # Contact and Emergency
     mobile_number_1 = Column(String(11), nullable=True)
     mobile_number_2 = Column(String(11), nullable=True)
@@ -71,6 +79,7 @@ def init_db():
     print("Initializing database and creating tables...")
     Base.metadata.create_all(bind=engine)
     print("Database initialized successfully.")
+
 
 if __name__ == "__main__":
     init_db()
