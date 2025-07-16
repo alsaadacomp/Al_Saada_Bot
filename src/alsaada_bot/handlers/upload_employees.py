@@ -7,13 +7,13 @@ from src.alsaada_bot.database import SessionLocal, Employee
 async def start_upload(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Starts the employee upload process."""
     await update.message.reply_text(
-        "To upload employees, please send an Excel file with the following columns: "
-        "full_name_ar, nickname_ar, date_of_birth, national_id_number, marital_status_ar, "
-        "current_address_ar, permanent_address_ar, date_of_hire, job_title_ar, department_ar, "
-        "salary_type_ar, salary_amount, drivers_license_ar, mobile_number_1, mobile_number_2, "
-        "cash_transfer_number_1, cash_transfer_type_1_ar, cash_transfer_number_2, "
-        "cash_transfer_type_2_ar, additional_notes_ar, employment_status_ar, file_number_ar, "
-        "emergency_contact_name_ar, emergency_contact_number, educational_qualification_ar"
+        "لرفع بيانات الموظفين، يرجى إرسال ملف Excel يحتوي على الأعمدة التالية: "
+        "الاسم الكامل, اللقب, تاريخ الميلاد, رقم الهوية الوطنية, الحالة الاجتماعية, "
+        "العنوان الحالي, العنوان الدائم, تاريخ التعيين, المسمى الوظيفي, القسم, "
+        "نوع الراتب, مبلغ الراتب, رخصة القيادة, رقم الجوال 1, رقم الجوال 2, "
+        "رقم التحويل النقدي 1, نوع التحويل النقدي 1, رقم التحويل النقدي 2, "
+        "نوع التحويل النقدي 2, ملاحظات إضافية, حالة التوظيف, رقم الملف / كود الوظيفة, "
+        "اسم جهة الاتصال للطوارئ, رقم جهة الاتصال للطوارئ, المؤهل العلمي"
     )
     await update.message.reply_document(document=open("employees_template.xlsx", "rb"))
 
@@ -50,9 +50,9 @@ async def handle_employee_upload(update: Update, context: ContextTypes.DEFAULT_T
         session.close()
 
         await update.message.reply_text(
-            f"Upload successful!\nAdded: {added_count} new employees.\nUpdated: {updated_count} existing employees."
+            f"تم الرفع بنجاح!\nتمت إضافة: {added_count} موظف جديد.\nتم تحديث: {updated_count} موظف موجود."
         )
 
     except Exception as e:
         logging.error(f"Error processing employee upload: {e}")
-        await update.message.reply_text("An error occurred while processing the file. Please ensure it is in the correct format.")
+        await update.message.reply_text("حدث خطأ أثناء معالجة الملف. يرجى التأكد من أنه بالصيغة الصحيحة.")
