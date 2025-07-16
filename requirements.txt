@@ -1,0 +1,25 @@
+# Core Bot and Database
+python-telegram-bot[ext]
+python-dotenv
+SQLAlchemy
+alembic
+
+# Data Handling and Reporting
+pandas
+openpyxl
+reportlab
+
+# Background Tasks
+APScheduler
+
+# Google Integration
+gspread
+pydrive
+
+# Image Processing
+Pillow
+
+# For Testing & Linting
+pytest
+flake8
+black
